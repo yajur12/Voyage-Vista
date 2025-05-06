@@ -16,7 +16,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 8000;
 const corsOptions = {
-    origin: *, // Allow requests from this origin
+    origin: "https://voyage-vista-frontend.vercel.app", // Allow requests from this origin
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   };
 

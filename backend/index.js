@@ -16,10 +16,14 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 8000;
 const corsOptions = {
-    origin: "http://localhost:3000", // Allow requests from this origin
-    credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-  };edentials: true
-
+    // origin: '*',
+    origin: '*', // Adjust according to your frontend domain or use '*' for all origins
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: ["Content-Type" , "Authorization", "token","user_token", "dToken"],
+    credentials: true,
+    optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
 
 // database connection
 mongoose.set('strictQuery', false);

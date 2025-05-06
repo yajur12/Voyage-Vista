@@ -9,38 +9,27 @@ import userRoute from './routes/users.js';
 import authRoute from './routes/auth.js';
 import reviewRoute from './routes/reviews.js';
 import bookingRoute from './routes/bookings.js';
-import paymentRoute from './routes/payment.js';
-
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 8000;
-const allowedOrigins = [
-    'http://localhost:3000',
-    'https://ytravelz.vercel.app',
-    'https://ytravelz-git-main-your-username.vercel.app',
-    'https://ytravelz-your-username.vercel.app'
-];
 
 const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization", "token", "user_token", "dToken"],
+    origin: ['http://localhost:3000', 'https://voyage-vista-tan.vercel.app', 'https://ytravelz.vercel.app'],
     credentials: true,
-    optionsSuccessStatus: 204,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
 };
 
 // database connection
 mongoose.set('strictQuery', false);
-const connect =() => {
+const connect = async() => {
     try{
-         mongoose.connect(process.env.MONGO_URL,{
+        
+        await mongoose.connect(process.env.MONGO_URL,{
             useNewUrlParser:true,
             useUnifiedTopology:true,
         });
@@ -51,25 +40,20 @@ const connect =() => {
     }
 }
 
-app.use(express.json());
-// app.use(cors({
-//     origin: 'http://localhost:3000', // The frontend's URL (if your frontend is running on this port)
-//     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow these HTTP methods
-//     allowedHeaders: ['Content-Type', 'Authorization'], // Allow these headers
-//   }));
+// middleware
 app.use(cors(corsOptions));
+app.use(express.json());
 app.use(cookieParser());
+
+// Enable pre-flight requests for all routes
+app.options('*', cors(corsOptions));
+
+// routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/tours", tourRoute);
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/review", reviewRoute);
 app.use("/api/v1/booking", bookingRoute);
-app.use("/api/v1/payment", paymentRoute);
-
-app.get('/', (req, res) => {
-    res.send('Welcome to the Tour and Travel API!');
-  });
-  
 
 app.listen(port, () => {
     connect();

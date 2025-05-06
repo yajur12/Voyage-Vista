@@ -15,15 +15,26 @@ import paymentRoute from './routes/payment.js';
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 8000;
+const allowedOrigins = [
+    'http://localhost:3000',
+    'https://ytravelz.vercel.app',
+    'https://ytravelz-git-main-your-username.vercel.app',
+    'https://ytravelz-your-username.vercel.app'
+];
+
 const corsOptions = {
-    // origin: '*',
-    origin: '*', // Adjust according to your frontend domain or use '*' for all origins
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: ["Content-Type" , "Authorization", "token","user_token", "dToken"],
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization", "token", "user_token", "dToken"],
     credentials: true,
     optionsSuccessStatus: 204,
 };
-app.use(cors(corsOptions));
 
 // database connection
 mongoose.set('strictQuery', false);

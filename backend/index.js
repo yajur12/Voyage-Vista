@@ -15,14 +15,17 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://voyage-vista-tan.vercel.app', 'https://ytravelz.vercel.app'],
+    origin: true, // This will reflect the request origin
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Access-Control-Allow-Credentials'],
     exposedHeaders: ['Content-Range', 'X-Content-Range'],
     preflightContinue: false,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 204,
+    maxAge: 86400 // Increase preflight cache time to 24 hours
 };
+
+app.options('*', cors(corsOptions));
 
 // database connection
 mongoose.set('strictQuery', false);
@@ -46,7 +49,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Enable pre-flight requests for all routes
-app.options('*', cors(corsOptions));
+
 
 // routes
 app.use("/api/v1/auth", authRoute);
